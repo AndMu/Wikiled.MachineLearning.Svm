@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using NLog;
 using Wikiled.Arff.Persistence;
 using Wikiled.Core.Utility.Arguments;
+using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Parameters

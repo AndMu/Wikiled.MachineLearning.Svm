@@ -1,6 +1,6 @@
 using System;
 using NLog;
-using Wikiled.Arff.Data;
+using Node = Wikiled.MachineLearning.Svm.Data.Node;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {

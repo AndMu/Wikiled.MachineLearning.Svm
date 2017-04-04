@@ -41,7 +41,7 @@ namespace Wikiled.MachineLearning.Svm.Parameters
             Guard.NotNull(() => problem, problem);
             crossValidation = double.MinValue;
             var parameter = (Parameter)SearchParameters.Default.Clone();
-            List<Task<Tuple<Parameter, double>>> tasks = new List<Task<Tuple<Parameter, double>>>();
+            List<Task<(Parameter Parameter, double Accuracy)>> tasks = new List<Task<ValueTuple<Parameter, double>>>();
             foreach (var gamma in SearchParameters.Gamma)
             {
                 foreach (var cValue in SearchParameters.C)
@@ -52,32 +52,28 @@ namespace Wikiled.MachineLearning.Svm.Parameters
             }
 
             var results = await Task.WhenAll(tasks);
-            if (results.All(item => item == null))
+            if (results.All(item => item.Parameter == null))
             {
                 log.Warn("No results found");
                 return parameter;
             }
 
-            var best = results.Where(item => item != null).Max(item => item.Item2);
-            var bestResult = results.FirstOrDefault(item => item.Item2 == best);
-            if (bestResult == null)
-            {
-                log.Warn("Best results - null");
-                return parameter;
-            }
-
+            var bestResult = results.Where(item => item.Parameter != null)
+                                    .OrderByDescending(item => item.Accuracy)
+                                    .First();
+          
             log.Info("Found best: C:{0} Gamma:{1} Result:{2:F2}", bestResult.Item1.C, bestResult.Item1.Gamma, bestResult.Item2);
-            parameter.C = bestResult.Item1.C;
-            parameter.Gamma = bestResult.Item1.Gamma;
-            parameter.Performance = bestResult.Item2;
+            parameter.C = bestResult.Parameter.C;
+            parameter.Gamma = bestResult.Parameter.Gamma;
+            parameter.Performance = bestResult.Accuracy;
             return parameter;
         }
 
-        private Tuple<Parameter, double> Search(double gamma, double cValue, Problem problem, CancellationToken token)
+        private (Parameter parameter, double accuracy) Search(double gamma, double cValue, Problem problem, CancellationToken token)
         {
             if (token.IsCancellationRequested)
             {
-                return null;
+                return (null, 0);
             }
 
             var localParameters = (Parameter)SearchParameters.Default.Clone();
@@ -97,7 +93,7 @@ namespace Wikiled.MachineLearning.Svm.Parameters
                 log.Info("C:{0} Gamma:{1} {2:F2}%", localParameters.C, localParameters.Gamma, test * 100);
             }
 
-            return new Tuple<Parameter, double>(localParameters, test);
+            return (localParameters, test);
         }
     }
 }

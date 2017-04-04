@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Wikiled.Arff.Data;
 using Wikiled.Arff.Persistence;
 using Wikiled.Core.Utility.Arguments;
 using Wikiled.Core.Utility.Extensions;
 using Wikiled.Core.Utility.Serialization;
+using Wikiled.MachineLearning.Svm.Logic;
+using DataLine = Wikiled.MachineLearning.Svm.Data.DataLine;
 
-namespace Wikiled.MachineLearning.Svm.Logic
+namespace Wikiled.MachineLearning.Svm.Extensions
 {
     public static class ArffDataSetExtensions
     {

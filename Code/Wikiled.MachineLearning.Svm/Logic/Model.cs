@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using Wikiled.Arff.Data;
 using Wikiled.MachineLearning.Svm.Parameters;
+using Node = Wikiled.MachineLearning.Svm.Data.Node;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {

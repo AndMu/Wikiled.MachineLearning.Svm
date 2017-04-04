@@ -1,4 +1,6 @@
-﻿using Wikiled.MachineLearning.Svm.Parameters;
+﻿using System.Threading.Tasks;
+using Wikiled.MachineLearning.Svm.Extensions;
+using Wikiled.MachineLearning.Svm.Parameters;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
@@ -16,11 +18,17 @@ namespace Wikiled.MachineLearning.Svm.Logic
             y = (sbyte[])y_.Clone();
             cache = new Cache(prob.Count, (long)(param.CacheSize * (1 << 20)));
             qd = new float[prob.Count];
-
-            for (int i = 0; i < prob.Count; i++)
-            {
-                qd[i] = (float)KernelFunction(i, i);
-            }
+            Parallel.For(
+                0,
+                prob.Count,
+                new ParallelOptions
+                {
+                    CancellationToken = param.Token
+                },
+                i =>
+                {
+                    qd[i] = (float)KernelFunction(i, i);
+                });
         }
 
         public sealed override float[] GetQ(int index, int len)
@@ -29,10 +37,17 @@ namespace Wikiled.MachineLearning.Svm.Logic
             int start;
             if ((start = cache.GetData(index, ref data, len)) < len)
             {
-                for (int i = start; i < len; i++)
-                {
-                    data[i] = (float)(y[index] * y[i] * KernelFunction(index, i));
-                }
+                Parallel.For(
+                    start,
+                    len,
+                    new ParallelOptions
+                    {
+                        CancellationToken = Param.Token
+                    },
+                    i =>
+                    {
+                        data[i] = (float)(y[index] * y[i] * KernelFunction(index, i));
+                    });
             }
 
             return data;

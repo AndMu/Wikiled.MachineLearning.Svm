@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
-using Wikiled.Arff.Data;
+using Node = Wikiled.MachineLearning.Svm.Data.Node;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {

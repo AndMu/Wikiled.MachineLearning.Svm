@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Schedulers;
 using NLog;
 using Wikiled.Arff.Persistence;
 using Wikiled.Core.Utility.Arguments;
+using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 
@@ -33,11 +33,14 @@ namespace Wikiled.MachineLearning.Svm.Clients
             // https://www.quora.com/Support-Vector-Machines/SVM-performance-depends-on-scaling-and-normalization-Is-this-considered-a-drawback
             header.Normalization = dataSet.Normalization;
             Problem problem = dataSet.GetProblem();
+            var scheduler = new ConcurrentExclusiveSchedulerPair(TaskScheduler.Default, Environment.ProcessorCount / 2)
+                .ConcurrentScheduler;
             var taskFactory = new TaskFactory(
                 token,
                 TaskCreationOptions.LongRunning,
                 TaskContinuationOptions.LongRunning,
-                new LimitedConcurrencyLevelTaskScheduler(Environment.ProcessorCount / 2));
+                scheduler);
+            
             ParametersSelectionFactory factory = new ParametersSelectionFactory(taskFactory);
             var selection = factory.Create(header, dataSet);
             var parameters = await selection.Find(problem, CancellationToken.None).ConfigureAwait(false);

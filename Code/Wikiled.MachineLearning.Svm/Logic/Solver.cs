@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using NLog;
+using Wikiled.MachineLearning.Svm.Extensions;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {

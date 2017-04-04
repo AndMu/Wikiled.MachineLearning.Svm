@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Wikiled.Arff.Data;
 using Wikiled.MachineLearning.Svm.Parameters;
+using Node = Wikiled.MachineLearning.Svm.Data.Node;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
@@ -92,6 +92,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
                     maxIndex++;
                 }
             }
+
             maxIndex++;
             for (int r = 0; r < rows; r++)
             {
@@ -99,6 +100,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 {
                     continue;
                 }
+
                 List<Node> nodes = new List<Node>();
                 nodes.Add(new Node(0, X.Count + 1));
                 for (int c = 0; c < columns; c++)
@@ -107,14 +109,16 @@ namespace Wikiled.MachineLearning.Svm.Logic
                     {
                         continue;
                     }
+
                     double value = similarities[r, c];
                     nodes.Add(new Node(nodes.Count, value));
                 }
+
                 X.Add(nodes.ToArray());
                 Y.Add(rowLabels[r]);
             }
+
             return new Problem(X.Count, Y.ToArray(), X.ToArray(), maxIndex);
         }
-
     }
 }

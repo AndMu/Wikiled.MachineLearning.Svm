@@ -6,6 +6,7 @@ using Wikiled.Arff.Persistence;
 using Wikiled.Arff.Persistence.Headers;
 using Wikiled.Core.Utility.Arguments;
 using Wikiled.Core.Utility.Extensions;
+using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Clients

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NLog;
 using NUnit.Framework;
 using Wikiled.Arff.Persistence;
+using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 

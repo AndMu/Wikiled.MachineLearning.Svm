@@ -1,4 +1,4 @@
-﻿namespace Wikiled.MachineLearning.Svm.Logic
+﻿namespace Wikiled.MachineLearning.Svm.Extensions
 {
     internal static class SVMExtensions
     {

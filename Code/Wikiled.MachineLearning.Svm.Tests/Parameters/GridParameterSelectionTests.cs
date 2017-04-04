@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Schedulers;
 using Moq;
 using NUnit.Framework;
 using Wikiled.Arff.Persistence;
+using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 
@@ -29,7 +29,9 @@ namespace Wikiled.MachineLearning.Svm.Tests.Parameters
         public void Setup()
         {
             training = new Mock<ITrainingModel>();
-            taskFactory = new TaskFactory(new LimitedConcurrencyLevelTaskScheduler(2));
+            var scheduler = new ConcurrentExclusiveSchedulerPair(TaskScheduler.Default, 2)
+                .ConcurrentScheduler;
+            taskFactory = new TaskFactory(scheduler);
             parameters = new GridSearchParameters(5, new double[] { 1, 2, 3, 4 }, new double[] { 1, 2, 3, 4 }, new Parameter());
             instance = new GridParameterSelection(taskFactory, training.Object, parameters);
 

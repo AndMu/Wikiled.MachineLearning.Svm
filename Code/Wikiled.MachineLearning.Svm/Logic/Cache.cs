@@ -2,7 +2,7 @@ using System;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
-    internal partial class Cache
+    internal class Cache
     {
         private readonly int count;
 

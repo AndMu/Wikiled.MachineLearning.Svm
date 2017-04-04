@@ -1,4 +1,5 @@
-﻿using Wikiled.MachineLearning.Svm.Parameters;
+﻿using Wikiled.MachineLearning.Svm.Extensions;
+using Wikiled.MachineLearning.Svm.Parameters;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {

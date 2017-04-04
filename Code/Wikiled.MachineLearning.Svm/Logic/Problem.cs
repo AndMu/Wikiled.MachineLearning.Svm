@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Wikiled.Arff.Data;
+using DataLine = Wikiled.MachineLearning.Svm.Data.DataLine;
+using Node = Wikiled.MachineLearning.Svm.Data.Node;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {

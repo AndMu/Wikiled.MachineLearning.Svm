@@ -1,33 +1,22 @@
 ﻿using System;
-using Wikiled.Arff.Data;
+using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Parameters;
+using Node = Wikiled.MachineLearning.Svm.Data.Node;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
     internal abstract class Kernel : IQMatrix
     {
-        private readonly double coef0;
-
-        private readonly int degree;
-
-        private readonly double gamma;
-
-        private readonly KernelType kernelType;
-
         private readonly Node[][] xNodes;
 
         private readonly double[] xSquare;
 
         protected Kernel(int l, Node[][] x, Parameter param)
         {
-            kernelType = param.KernelType;
-            degree = param.Degree;
-            gamma = param.Gamma;
-            coef0 = param.Coefficient0;
-
+            Param = param;
             xNodes = (Node[][])x.Clone();
 
-            if (kernelType == KernelType.RBF)
+            if (param.KernelType == KernelType.RBF)
             {
                 xSquare = new double[l];
                 for (int i = 0; i < l; i++)
@@ -40,6 +29,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 xSquare = null;
             }
         }
+
+        public Parameter Param { get; }
 
         public static double KernelFunction(Node[] x, Node[] y, Parameter param)
         {
@@ -75,16 +66,16 @@ namespace Wikiled.MachineLearning.Svm.Logic
 
         protected double KernelFunction(int i, int j)
         {
-            switch (kernelType)
+            switch (Param.KernelType)
             {
                 case KernelType.Linear:
                     return Dot(xNodes[i], xNodes[j]);
                 case KernelType.Polynomial:
-                    return Powi(gamma * Dot(xNodes[i], xNodes[j]) + coef0, degree);
+                    return Powi(Param.Gamma * Dot(xNodes[i], xNodes[j]) + Param.Coefficient0, Param.Degree);
                 case KernelType.RBF:
-                    return Math.Exp(-gamma * (xSquare[i] + xSquare[j] - 2 * Dot(xNodes[i], xNodes[j])));
+                    return Math.Exp(-Param.Gamma * (xSquare[i] + xSquare[j] - 2 * Dot(xNodes[i], xNodes[j])));
                 case KernelType.Sigmoid:
-                    return Math.Tanh(gamma * Dot(xNodes[i], xNodes[j]) + coef0);
+                    return Math.Tanh(Param.Gamma * Dot(xNodes[i], xNodes[j]) + Param.Coefficient0);
                 case KernelType.Precomputed:
                     return xNodes[i][(int)xNodes[j][0].Value].Value;
                 default:

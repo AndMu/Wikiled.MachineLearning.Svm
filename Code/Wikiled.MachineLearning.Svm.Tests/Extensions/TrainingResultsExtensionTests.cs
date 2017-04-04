@@ -5,7 +5,7 @@ using Wikiled.Arff.Persistence;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 
-namespace Wikiled.MachineLearning.Svm.Tests.Logic
+namespace Wikiled.MachineLearning.Svm.Tests.Extensions
 {
     [TestFixture]
     public class TrainingResultsExtensionTests
