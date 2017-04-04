@@ -1,0 +1,15 @@
+svm_type C_SVC
+kernel_type Linear
+performance 1
+nr_class 3
+total_sv 6
+rho 0 0 0
+label 0 1 2
+nr_sv 2 2 2
+SV
+0.5 0.5 0:1
+0.5 0.5 0:1
+-0.5 0.5 1:1
+-0.5 0.5 1:1
+-0.5 -0.5 2:1
+-0.5 -0.5 2:1

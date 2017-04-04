@@ -1,0 +1,45 @@
+@RELATION Test
+@ATTRIBUTE Good NUMERIC
+@ATTRIBUTE Bad NUMERIC
+@ATTRIBUTE class {Negative, Neutral, Positive}
+@DATA
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
+{0 1,2 Positive}
+{1 1,2 Negative}
