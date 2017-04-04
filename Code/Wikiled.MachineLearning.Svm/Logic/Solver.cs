@@ -499,6 +499,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
             {
                 qI = qMatrix.GetQ(i, activeSize);
             }
+
             for (int j = 0; j < activeSize; j++)
             {
                 if (y[j] == +1)

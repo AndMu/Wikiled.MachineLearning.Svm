@@ -33,7 +33,16 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
         }
 
         [Test]
-        public void Test()
+        public void Train()
+        {
+            log.Info("Test");
+            var problem = LoadData();
+            parameters.Weights = WeightCalculation.GetWeights(problem.Y);
+            model.Train(problem, parameters);
+        }
+
+        [Test]
+        public void PerformCrossValidation()
         {
             log.Info("Test");
             var problem = LoadData();

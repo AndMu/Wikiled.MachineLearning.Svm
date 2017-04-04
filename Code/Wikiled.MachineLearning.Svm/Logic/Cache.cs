@@ -55,12 +55,13 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 }
 
                 // allocate new space
-                float[] new_data = new float[len];
+                float[] newData = new float[len];
                 if (h.data != null)
                 {
-                    Array.Copy(h.data, 0, new_data, 0, h.len);
+                    Array.Copy(h.data, 0, newData, 0, h.len);
                 }
-                h.data = new_data;
+
+                h.data = newData;
                 size -= more;
                 Swap(ref h.len, ref len);
             }
