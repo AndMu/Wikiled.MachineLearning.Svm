@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
@@ -35,6 +36,7 @@ namespace Wikiled.MachineLearning.Svm.Clients
             Problem problem = dataSet.GetProblem();
             var scheduler = new ConcurrentExclusiveSchedulerPair(TaskScheduler.Default, Environment.ProcessorCount / 2)
                 .ConcurrentScheduler;
+            new TaskPoolScheduler(new TaskFactory(scheduler));
             var taskFactory = new TaskFactory(
                 token,
                 TaskCreationOptions.LongRunning,

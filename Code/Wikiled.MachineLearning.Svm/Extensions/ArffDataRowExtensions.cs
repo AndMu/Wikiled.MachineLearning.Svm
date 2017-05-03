@@ -12,13 +12,8 @@ namespace Wikiled.MachineLearning.Svm.Extensions
         public static void ProcessLine(this IArffDataRow row, DataLine line)
         {
             var indexes = new Dictionary<int, double>();
-            foreach (var wordsData in row.GetRecords())
+            foreach (var wordsData in row.GetRecords().Where(item => !(item.Header is DateHeader)))
             {
-                if (wordsData.Header is DateHeader)
-                {
-                    continue;
-                }
-
                 int index = row.Owner.Header.GetIndex(wordsData.Header);
                 double value = 1;
                 if (wordsData.Value != null)
