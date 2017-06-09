@@ -5,6 +5,7 @@
     <version>1.0.0</version>
     <authors>Wikiled</authors>
     <description>Wikiled Svm Library</description>
+	<projectUrl>https://github.com/AndMu/Wikiled.MachineLearning.Svm</projectUrl>
   </metadata>
   <files>
     <file src="bin\Release\Wikiled.MachineLearning.Svm.dll" target="lib\net462" />
