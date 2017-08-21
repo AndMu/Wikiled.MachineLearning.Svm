@@ -94,13 +94,13 @@
       <HintPath>..\packages\Moq.4.7.99\lib\net45\Moq.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.7.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\packages\protobuf-net.2.3.0\lib\net40\protobuf-net.dll</HintPath>
+    <Reference Include="protobuf-net, Version=2.3.2.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.3.2\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
@@ -141,8 +141,8 @@
     <Reference Include="Wikiled.Arff, Version=1.0.16.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Wikiled.Arff.1.0.16\lib\net462\Wikiled.Arff.dll</HintPath>
     </Reference>
-    <Reference Include="Wikiled.Core.Utility, Version=2.1.12.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Wikiled.Core.Utility.2.1.12\lib\net462\Wikiled.Core.Utility.dll</HintPath>
+    <Reference Include="Wikiled.Core.Utility, Version=2.1.16.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Wikiled.Core.Utility.2.1.16\lib\net462\Wikiled.Core.Utility.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
