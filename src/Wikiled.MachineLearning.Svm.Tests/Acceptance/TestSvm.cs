@@ -62,9 +62,9 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
             CancellationTokenSource source = new CancellationTokenSource();
             parameters.Token = source.Token;
             var task = Task.Run(() => model.PerformCrossValidation(problem, parameters, 5));
-            await Task.Delay(5000);
+            await Task.Delay(5000).ConfigureAwait(false);
             source.Cancel();
-            await Task.Delay(5000);
+            await Task.Delay(5000).ConfigureAwait(false);
             Assert.IsTrue(task.IsFaulted);
         }
 

@@ -51,7 +51,7 @@ namespace Wikiled.MachineLearning.Svm.Parameters
                 }
             }
 
-            var results = await Task.WhenAll(tasks);
+            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
             if (results.All(item => item.Parameter == null))
             {
                 log.Warn("No results found");

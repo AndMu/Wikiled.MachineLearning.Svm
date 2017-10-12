@@ -26,7 +26,7 @@ foreach (var definition in documentSet.Document.Where(item => item.Labels.Length
 }
 
 arff.CompactHeader(3);
-arff.CompactReviews(3);
+await arff.CompactReviews(3);
 arff.CompactClass(3);
 
 if (arff.Reviews.Length < 10)
@@ -53,8 +53,7 @@ var one = dataSet.AddDocument();
 one.Class.Value = "One";
 one.AddRecord("Good");
 problem = dataSet.GetProblem();
-var result = await instance.Find(problem, CancellationToken.None); result.
-item.AddRecord("a");
+var result = await instance.Find(problem, CancellationToken.None); 
 ```
 
 
