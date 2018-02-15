@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Wikiled.Arff.Persistence;
-using Wikiled.Core.Utility.Arguments;
-using Wikiled.Core.Utility.Extensions;
-using Wikiled.Core.Utility.Serialization;
+using Wikiled.Common.Arguments;
+using Wikiled.Common.Extensions;
+using Wikiled.Common.Serialization;
 using Wikiled.MachineLearning.Svm.Logic;
 using DataLine = Wikiled.MachineLearning.Svm.Data.DataLine;
 

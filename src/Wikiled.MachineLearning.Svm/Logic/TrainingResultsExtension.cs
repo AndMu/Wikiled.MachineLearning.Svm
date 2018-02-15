@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Xml.Linq;
 using NLog;
-using Snappy;
 using Wikiled.Arff.Persistence;
-using Wikiled.Core.Utility.Arguments;
-using Wikiled.Core.Utility.Extensions;
-using Wikiled.Core.Utility.Serialization;
+using Wikiled.Common.Arguments;
+using Wikiled.Common.Extensions;
+using Wikiled.Common.Serialization;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
@@ -18,26 +18,13 @@ namespace Wikiled.MachineLearning.Svm.Logic
         {
             Guard.NotNullOrEmpty(() => path, path);
             log.Debug("Load: {0}", path);
-            if (!Directory.Exists(path))
+
+            if (File.Exists(path))
             {
-                throw new ArgumentOutOfRangeException(nameof(path), path);
+                return LoadCompressed(path);
             }
 
-            var file = GetFile(path, "header.xml");
-            var header = File.Exists(file) ? XDocument.Load(file).XmlDeserialize<TrainingHeader>() : null;
-
-            var model = Model.Read(GetFile(path, "model.dat"));
-            var bytes = File.ReadAllBytes(GetFile(path, "arff.dat"));
-            IArffDataSet arff;
-            using (MemoryStream stream = new MemoryStream(SnappyCodec.Uncompress(bytes)))
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    arff = ArffDataSet.LoadSimple(reader);
-                }
-            }
-
-            return new TrainingResults(model, header, arff);
+            return LoadNormal(path);
         }
 
         public static void Save(this TrainingResults result, string path)
@@ -46,9 +33,48 @@ namespace Wikiled.MachineLearning.Svm.Logic
             Guard.NotNullOrEmpty(() => path, path);
             log.Debug("Save: {0}", path);
             path.EnsureDirectoryExistence();
+
             result.Header.XmlSerialize().Save(Path.Combine(path, "header.xml"));
-            SaveArff(result.DataSet, path);
-            SaveModel(result.Model, path);
+            using (FileStream stream = new FileStream(Path.Combine(path, "result.arff"), FileMode.Create))
+            {
+                SaveArff(result.DataSet, stream);
+            }
+
+            using (FileStream stream = new FileStream(Path.Combine(path, "result.arff"), FileMode.Create))
+            {
+                result.Model.Write(stream);
+            }
+        }
+
+        public static void SaveCompressed(this TrainingResults result, string path)
+        {
+            Guard.NotNull(() => result, result);
+            Guard.NotNullOrEmpty(() => path, path);
+            log.Debug("SaveCompressed: {0}", path);
+
+            using (FileStream zipToOpen = new FileStream(path, FileMode.Create))
+            {
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                {
+                    ZipArchiveEntry readmeEntry = archive.CreateEntry("header.xml");
+                    using (var stream = readmeEntry.Open())
+                    {
+                        result.Header.XmlSerialize().Save(stream);
+                    }
+
+                    ZipArchiveEntry resultEntry = archive.CreateEntry("result.arff");
+                    using (var stream = resultEntry.Open())
+                    {
+                        SaveArff(result.DataSet, stream);
+                    }
+
+                    ZipArchiveEntry modelEntry = archive.CreateEntry("model.dat");
+                    using (var stream = modelEntry.Open())
+                    {
+                        result.Model.Write(stream);
+                    }
+                }
+            }
         }
 
         private static string GetFile(string path, string name)
@@ -62,27 +88,67 @@ namespace Wikiled.MachineLearning.Svm.Logic
             return file;
         }
 
-        private static void SaveArff(IArffDataSet arff, string path)
+        private static TrainingResults LoadCompressed(string path)
         {
-            using (MemoryStream stream = new MemoryStream())
+            log.Debug("LoadNormal: {0}", path);
+            TrainingHeader header = null;
+            Model model = null;
+            IArffDataSet dataSet = null;
+            using (ZipArchive archive = ZipFile.OpenRead(path))
             {
-                using (StreamWriter writer = new StreamWriter(stream))
+                foreach (ZipArchiveEntry entry in archive.Entries)
                 {
-                    arff.Save(writer);
+                    if (entry.FullName.EndsWith("header.xml", StringComparison.OrdinalIgnoreCase))
+                    {
+                        header = XDocument.Load(entry.Open()).XmlDeserialize<TrainingHeader>();
+                    }
+                    else if (entry.FullName.EndsWith("model.dat", StringComparison.OrdinalIgnoreCase))
+                    {
+                        model = Model.Read(entry.Open());
+                    }
+                    else if (entry.FullName.EndsWith("result.arff", StringComparison.OrdinalIgnoreCase))
+                    {
+                        using (StreamReader reader = new StreamReader(entry.Open()))
+                        {
+                            dataSet = ArffDataSet.LoadSimple(reader);
+                        }
+                    }
                 }
-
-                stream.Flush();
-                var data = SnappyCodec.Compress(stream.ToArray());
-                var file = Path.Combine(path, "arff.dat");
-                File.WriteAllBytes(file, data);
             }
+
+            return new TrainingResults(model, header, dataSet);
         }
 
-        private static void SaveModel(Model model, string path)
+        private static TrainingResults LoadNormal(string path)
         {
-            using (FileStream stream = new FileStream(Path.Combine(path, "model.dat"), FileMode.Create))
+            log.Debug("LoadNormal: {0}", path);
+            if (!Directory.Exists(path))
             {
-                model.Write(stream);
+                throw new ArgumentOutOfRangeException(nameof(path), path);
+            }
+
+            var file = GetFile(path, "header.xml");
+            var header = File.Exists(file) ? XDocument.Load(file).XmlDeserialize<TrainingHeader>() : null;
+
+            var model = Model.Read(GetFile(path, "model.dat"));
+            IArffDataSet arff;
+            using (FileStream stream = new FileStream(GetFile(path, "result.arff"), FileMode.Open))
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    arff = ArffDataSet.LoadSimple(reader);
+                }
+            }
+
+            return new TrainingResults(model, header, arff);
+        }
+
+        private static void SaveArff(IArffDataSet arff, Stream outStream)
+        {
+            using (StreamWriter writer = new StreamWriter(outStream))
+            {
+                arff.Save(writer);
+                outStream.Flush();
             }
         }
     }

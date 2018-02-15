@@ -48,5 +48,16 @@ namespace Wikiled.MachineLearning.Svm.Tests.Extensions
             Assert.IsNotNull(result.Model);
             Assert.IsNotNull(result.DataSet);
         }
+
+        [Test]
+        public void SaveLoadCompresed()
+        {
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "instance", "data.dat");
+            instance.SaveCompressed(path);
+            var result = TrainingResultsExtension.Load(path);
+            Assert.IsNotNull(result.Header);
+            Assert.IsNotNull(result.Model);
+            Assert.IsNotNull(result.DataSet);
+        }
     }
 }

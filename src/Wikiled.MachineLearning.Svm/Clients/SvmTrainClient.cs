@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using Wikiled.Arff.Persistence;
-using Wikiled.Core.Utility.Arguments;
+using Wikiled.Common.Arguments;
 using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;

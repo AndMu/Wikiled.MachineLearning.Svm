@@ -1,5 +1,5 @@
 ﻿using Wikiled.Arff.Persistence;
-using Wikiled.Core.Utility.Arguments;
+using Wikiled.Common.Arguments;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {

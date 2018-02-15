@@ -4,8 +4,8 @@ using System.Linq;
 using NLog;
 using Wikiled.Arff.Persistence;
 using Wikiled.Arff.Persistence.Headers;
-using Wikiled.Core.Utility.Arguments;
-using Wikiled.Core.Utility.Extensions;
+using Wikiled.Common.Arguments;
+using Wikiled.Common.Extensions;
 using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 

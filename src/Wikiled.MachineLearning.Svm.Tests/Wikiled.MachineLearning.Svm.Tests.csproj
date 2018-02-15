@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>NET471</TargetFramework>
+  </PropertyGroup>
+
+<ItemGroup>
+    <PackageReference Include="Moq" Version="4.8.1" />
+    <PackageReference Include="NLog" Version="4.4.12" />
+    <PackageReference Include="NUnit" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />    
+    <PackageReference Include="Wikiled.Arff" Version="2.0.1" />
+    <PackageReference Include="Wikiled.Common" Version="1.0.3" />
+  </ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="..\Wikiled.MachineLearning.Svm\Wikiled.MachineLearning.Svm.csproj" />
+</ItemGroup>
+
+<ItemGroup>
+  <None Update="Data\classify.dat">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+  <None Update="Data\data.arff">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+  <None Update="Data\data_b.arff">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+  <None Update="Data\label.dat">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+  <None Update="Data\testing_data_1.arff">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+</ItemGroup>  
+</Project>
