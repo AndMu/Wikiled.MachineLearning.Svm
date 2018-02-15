@@ -14,6 +14,12 @@ namespace Wikiled.MachineLearning.Svm.Logic
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
+        private static string modelFile = "model.dat";
+
+        private static string arffFile = "result.arff";
+
+        private static string headerFile = "header.xml";
+
         public static TrainingResults Load(string path)
         {
             Guard.NotNullOrEmpty(() => path, path);
@@ -34,13 +40,13 @@ namespace Wikiled.MachineLearning.Svm.Logic
             log.Debug("Save: {0}", path);
             path.EnsureDirectoryExistence();
 
-            result.Header.XmlSerialize().Save(Path.Combine(path, "header.xml"));
-            using (FileStream stream = new FileStream(Path.Combine(path, "result.arff"), FileMode.Create))
+            result.Header.XmlSerialize().Save(Path.Combine(path, headerFile));
+            using (FileStream stream = new FileStream(Path.Combine(path, arffFile), FileMode.Create))
             {
                 SaveArff(result.DataSet, stream);
             }
 
-            using (FileStream stream = new FileStream(Path.Combine(path, "result.arff"), FileMode.Create))
+            using (FileStream stream = new FileStream(Path.Combine(path, modelFile), FileMode.Create))
             {
                 result.Model.Write(stream);
             }
@@ -56,19 +62,19 @@ namespace Wikiled.MachineLearning.Svm.Logic
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
                 {
-                    ZipArchiveEntry readmeEntry = archive.CreateEntry("header.xml");
+                    ZipArchiveEntry readmeEntry = archive.CreateEntry(headerFile);
                     using (var stream = readmeEntry.Open())
                     {
                         result.Header.XmlSerialize().Save(stream);
                     }
 
-                    ZipArchiveEntry resultEntry = archive.CreateEntry("result.arff");
+                    ZipArchiveEntry resultEntry = archive.CreateEntry(arffFile);
                     using (var stream = resultEntry.Open())
                     {
                         SaveArff(result.DataSet, stream);
                     }
 
-                    ZipArchiveEntry modelEntry = archive.CreateEntry("model.dat");
+                    ZipArchiveEntry modelEntry = archive.CreateEntry(modelFile);
                     using (var stream = modelEntry.Open())
                     {
                         result.Model.Write(stream);
@@ -98,15 +104,15 @@ namespace Wikiled.MachineLearning.Svm.Logic
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
-                    if (entry.FullName.EndsWith("header.xml", StringComparison.OrdinalIgnoreCase))
+                    if (entry.FullName.EndsWith(headerFile, StringComparison.OrdinalIgnoreCase))
                     {
                         header = XDocument.Load(entry.Open()).XmlDeserialize<TrainingHeader>();
                     }
-                    else if (entry.FullName.EndsWith("model.dat", StringComparison.OrdinalIgnoreCase))
+                    else if (entry.FullName.EndsWith(modelFile, StringComparison.OrdinalIgnoreCase))
                     {
                         model = Model.Read(entry.Open());
                     }
-                    else if (entry.FullName.EndsWith("result.arff", StringComparison.OrdinalIgnoreCase))
+                    else if (entry.FullName.EndsWith(arffFile, StringComparison.OrdinalIgnoreCase))
                     {
                         using (StreamReader reader = new StreamReader(entry.Open()))
                         {
@@ -127,12 +133,12 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 throw new ArgumentOutOfRangeException(nameof(path), path);
             }
 
-            var file = GetFile(path, "header.xml");
+            var file = GetFile(path, headerFile);
             var header = File.Exists(file) ? XDocument.Load(file).XmlDeserialize<TrainingHeader>() : null;
 
-            var model = Model.Read(GetFile(path, "model.dat"));
+            var model = Model.Read(GetFile(path, modelFile));
             IArffDataSet arff;
-            using (FileStream stream = new FileStream(GetFile(path, "result.arff"), FileMode.Open))
+            using (FileStream stream = new FileStream(GetFile(path, arffFile), FileMode.Open))
             {
                 using (StreamReader reader = new StreamReader(stream))
                 {
