@@ -4,7 +4,7 @@ using Wikiled.MachineLearning.Svm.Parameters;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
-    internal class SvcQ : Kernel
+    internal sealed class SvcQ : Kernel
     {
         private readonly sbyte[] y;
 
@@ -31,7 +31,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 });
         }
 
-        public sealed override float[] GetQ(int index, int len)
+        public override float[] GetQ(int index, int len)
         {
             float[] data = null;
             int start;
@@ -53,12 +53,12 @@ namespace Wikiled.MachineLearning.Svm.Logic
             return data;
         }
 
-        public sealed override float[] GetQD()
+        public override float[] GetQD()
         {
             return qd;
         }
 
-        public sealed override void SwapIndex(int i, int j)
+        public override void SwapIndex(int i, int j)
         {
             cache.SwapIndex(i, j);
             base.SwapIndex(i, j);

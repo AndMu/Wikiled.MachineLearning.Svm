@@ -11,20 +11,25 @@ using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Clients
 {
-    public class SvmTestClient : ISvmTestClient
+    public class SvmTesting : ISvmTesting
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        private readonly IArffDataSet trainingDataSet;
+        private readonly IArffDataSet trainingVectorSpace;
 
-        private readonly Model trainingModel;
+        private readonly Model trainedModel;
 
-        public SvmTestClient(IArffDataSet trainingDataSet, Model trainingModel)
+        /// <summary>
+        /// Construtor
+        /// </summary>
+        /// <param name="trainingVectorSpace">Required to know feature space</param>
+        /// <param name="trainedModel">Trained model</param>
+        public SvmTesting(IArffDataSet trainingVectorSpace, Model trainedModel)
         {
-            Guard.NotNull(() => trainingDataSet, trainingDataSet);
-            Guard.NotNull(() => trainingModel, trainingModel);
-            this.trainingDataSet = trainingDataSet;
-            this.trainingModel = trainingModel;
+            Guard.NotNull(() => trainingVectorSpace, trainingVectorSpace);
+            Guard.NotNull(() => trainedModel, trainedModel);
+            this.trainingVectorSpace = trainingVectorSpace;
+            this.trainedModel = trainedModel;
         }
 
         public void Classify(IArffDataSet testDataSet)
@@ -56,13 +61,13 @@ namespace Wikiled.MachineLearning.Svm.Clients
                 }
             }
 
-            trainingDataSet.Save(Path.Combine(path, $"testing_data_{result.CorrectProbability}.arff"));
+            trainingVectorSpace.Save(Path.Combine(path, $"testing_data_{result.CorrectProbability}.arff"));
             return result.CorrectProbability;
         }
 
         public IArffDataSet CreateTestDataset()
         {
-            return ArffDataSet.CreateFixed((IHeadersWordsHandling)trainingDataSet.Header.Clone(), "Test");
+            return ArffDataSet.CreateFixed((IHeadersWordsHandling)trainingVectorSpace.Header.Clone(), "Test");
         }
 
         public PredictionResult Test(IArffDataSet testingSet)
@@ -92,7 +97,7 @@ namespace Wikiled.MachineLearning.Svm.Clients
             }
 
             Problem testing = dataSet.GetProblem();
-            return Prediction.Predict(testing, trainingModel, false);
+            return Prediction.Predict(testing, trainedModel, false);
         }
     }
 }

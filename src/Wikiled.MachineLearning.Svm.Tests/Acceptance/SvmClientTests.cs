@@ -20,7 +20,7 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
                               : ArffDataSet.LoadSimple(file);
             file = Path.Combine(TestContext.CurrentContext.TestDirectory, "data", modelName);
             var model = Model.Read(file);
-            var client = new SvmTestClient(dataSet, model);
+            var client = new SvmTesting(dataSet, model);
 
             var dataHolder = client.CreateTestDataset();
             var review = dataHolder.AddDocument();

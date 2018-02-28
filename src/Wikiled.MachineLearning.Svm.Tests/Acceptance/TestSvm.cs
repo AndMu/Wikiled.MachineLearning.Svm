@@ -14,11 +14,11 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
     [TestFixture]
     public class TestSvm
     {
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
         private Parameter parameters;
 
         private TrainingModel model;
-
-        private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         [SetUp]
         public void Setup()
@@ -29,7 +29,7 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
             parameters.CacheSize = 200;
             parameters.SvmType = header.SvmType;
             parameters.Probability = false;
-            model = new TrainingModel();
+            model = new TrainingModel(header);
         }
 
         [Test]
@@ -62,9 +62,16 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
             CancellationTokenSource source = new CancellationTokenSource();
             parameters.Token = source.Token;
             var task = Task.Run(() => model.PerformCrossValidation(problem, parameters, 5));
-            await Task.Delay(5000).ConfigureAwait(false);
+            await Task.Delay(100).ConfigureAwait(false);
             source.Cancel();
-            await Task.Delay(5000).ConfigureAwait(false);
+            try
+            {
+                task.Wait(5000);
+            }
+            catch
+            {
+            }
+
             Assert.IsTrue(task.IsFaulted);
         }
 

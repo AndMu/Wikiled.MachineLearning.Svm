@@ -11,6 +11,13 @@ namespace Wikiled.MachineLearning.Svm.Logic
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
+        public TrainingModel(TrainingHeader header)
+        {
+            Header = header;
+        }
+
+        public TrainingHeader Header { get; }
+
         /// <summary>
         ///     Performs cross validation.
         /// </summary>
@@ -59,7 +66,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
             Procedures.SvmCrossValidation(problem, parameters, nrFold, target);
             int totalCorrect = 0;
             double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
-            if (parameters.SvmType == SvmType.EPSILON_SVR || parameters.SvmType == SvmType.NU_SVR)
+            if (parameters.SvmType == SvmType.EPSILON_SVR ||
+                parameters.SvmType == SvmType.NU_SVR)
             {
                 for (i = 0; i < problem.Count; i++)
                 {

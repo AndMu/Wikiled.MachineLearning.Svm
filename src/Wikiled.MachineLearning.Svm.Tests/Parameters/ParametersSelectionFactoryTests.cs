@@ -52,7 +52,7 @@ namespace Wikiled.MachineLearning.Svm.Tests.Parameters
 
             TrainingHeader header = TrainingHeader.Create(kernel, SvmType.C_SVC);
             var result = factory.Create(header, dataSet) as GridParameterSelection;
-            Assert.AreEqual(5, result.SearchParameters.Folds);
+            Assert.AreEqual(3, result.SearchParameters.Folds);
             Assert.AreEqual(gammas, result.SearchParameters.Gamma.Length);
             Assert.AreEqual(c, result.SearchParameters.C.Length);
             Assert.AreEqual(kernel, result.SearchParameters.Default.KernelType);

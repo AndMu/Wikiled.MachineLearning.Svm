@@ -17,11 +17,11 @@ namespace Wikiled.MachineLearning.Svm.Parameters
             Default = parameter;
         }
 
-        public int Folds { get; }
+        public int Folds { get; set; }
 
-        public double[] C { get; }
+        public double[] C { get; set; }
 
-        public double[] Gamma { get; }
+        public double[] Gamma { get; set; }
 
         public Parameter Default { get; }
 

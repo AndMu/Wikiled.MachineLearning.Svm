@@ -3,7 +3,7 @@ using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Clients
 {
-    public interface ISvmTestClient
+    public interface ISvmTesting
     {
         IArffDataSet CreateTestDataset();
 

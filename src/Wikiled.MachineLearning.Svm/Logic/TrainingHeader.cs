@@ -1,13 +1,19 @@
 ﻿using Wikiled.Arff.Normalization;
+using Wikiled.MachineLearning.Svm.Parameters;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
     public class TrainingHeader
     {
-        public static TrainingHeader CreateDefault()
-        {
-            return Create(KernelType.Linear, SvmType.C_SVC);
-        }
+        public double AverageVectorSize { get; set; }
+
+        public bool GridSelection { get; set; }
+
+        public KernelType Kernel { get; set; }
+
+        public NormalizationType Normalization { get; set; }
+
+        public SvmType SvmType { get; set; }
 
         public static TrainingHeader Create(KernelType type, SvmType svmType)
         {
@@ -19,14 +25,9 @@ namespace Wikiled.MachineLearning.Svm.Logic
             return header;
         }
 
-        public bool GridSelection { get; set; }
-
-        public double AverageVectorSize { get; set; }
-
-        public NormalizationType Normalization { get; set; }
-
-        public KernelType Kernel { get; set; }
-
-        public SvmType SvmType { get; set; }
+        public static TrainingHeader CreateDefault()
+        {
+            return Create(KernelType.Linear, SvmType.C_SVC);
+        }
     }
 }

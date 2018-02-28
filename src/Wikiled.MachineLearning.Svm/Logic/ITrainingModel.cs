@@ -4,6 +4,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
 {
     public interface ITrainingModel
     {
+        TrainingHeader Header { get; }
+
         /// <summary>
         ///     Performs cross validation.
         /// </summary>

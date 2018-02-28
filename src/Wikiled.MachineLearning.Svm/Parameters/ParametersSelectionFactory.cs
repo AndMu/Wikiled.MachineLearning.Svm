@@ -29,9 +29,10 @@ namespace Wikiled.MachineLearning.Svm.Parameters
             defaultParameter.KernelType = header.Kernel;
             defaultParameter.CacheSize = 200;
             defaultParameter.SvmType = header.SvmType;
+            var model = new TrainingModel(header);
             if (!header.GridSelection)
             {
-                return new NullParameterSelection(defaultParameter);
+                return new NullParameterSelection(defaultParameter, model);
             }
 
             GridSearchParameters searchParameters;
@@ -51,20 +52,20 @@ namespace Wikiled.MachineLearning.Svm.Parameters
                 }
 
                 var training = dataset.GetProblem();
-                var weights = WeightCalculation.GetWeights(training.Y);
-                foreach (var classItem in weights)
+                defaultParameter.Weights = WeightCalculation.GetWeights(training.Y);
+                foreach (var classItem in defaultParameter.Weights)
                 {
                     logger.Info($"Using class [{classItem.Key}] with weight [{classItem.Value}]");
                 }
 
-                searchParameters = new GridSearchParameters(5, GetList(-1, 2, 1), gamma, defaultParameter);
+                searchParameters = new GridSearchParameters(3, GetList(-1, 2, 1), gamma, defaultParameter);
             }
             else
             {
-                searchParameters = new GridSearchParameters(5, GetList(-5, 15, 2), GetList(-15, 3, 2), defaultParameter);
+                searchParameters = new GridSearchParameters(3, GetList(-5, 15, 2), GetList(-15, 3, 2), defaultParameter);
             }
 
-            return new GridParameterSelection(taskFactory, new TrainingModel(), searchParameters);
+            return new GridParameterSelection(taskFactory, model, searchParameters);
         }
 
         private double[] GetList(double minPower, double maxPower, double iteration)

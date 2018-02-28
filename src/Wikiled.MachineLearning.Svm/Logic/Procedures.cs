@@ -73,7 +73,6 @@ namespace Wikiled.MachineLearning.Svm.Logic
             }
 
             // check whether nu-svc is feasible
-
             if (svmType == SvmType.NU_SVC)
             {
                 int l = prob.Count;
@@ -158,6 +157,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 nrFold,
                 new ParallelOptions
                 {
+                    MaxDegreeOfParallelism = Environment.ProcessorCount / 2,
                     CancellationToken = param.Token
                 },
                 i =>
@@ -498,7 +498,6 @@ namespace Wikiled.MachineLearning.Svm.Logic
                     {
                         kvalue[index] = Kernel.KernelFunction(x, model.SupportVectors[index], model.Parameter);
                     });
-
                 
                 int[] start = new int[nrClass];
                 start[0] = 0;

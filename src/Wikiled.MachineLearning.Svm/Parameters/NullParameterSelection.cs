@@ -9,11 +9,15 @@ namespace Wikiled.MachineLearning.Svm.Parameters
     {
         private readonly Parameter parameter;
 
-        public NullParameterSelection(Parameter parameter)
+        public NullParameterSelection(Parameter parameter, ITrainingModel training)
         {
             Guard.NotNull(() => parameter, parameter);
+            Guard.NotNull(() => training, training);
             this.parameter = parameter;
+            Training = training;
         }
+
+        public ITrainingModel Training { get; }
 
         public Task<Parameter> Find(Problem problem, CancellationToken token)
         {

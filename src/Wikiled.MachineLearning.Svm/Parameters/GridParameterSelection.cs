@@ -19,8 +19,6 @@ namespace Wikiled.MachineLearning.Svm.Parameters
 
         private readonly TaskFactory taskFactory;
 
-        private readonly ITrainingModel training;
-
         private double crossValidation = double.MinValue;
 
         public GridParameterSelection(TaskFactory taskFactory, ITrainingModel training, GridSearchParameters parameters)
@@ -29,11 +27,13 @@ namespace Wikiled.MachineLearning.Svm.Parameters
             Guard.NotNull(() => taskFactory, taskFactory);
             Guard.NotNull(() => training, training);
             SearchParameters = parameters;
-            this.training = training;
+            Training = training;
             this.taskFactory = taskFactory;
         }
 
         public GridSearchParameters SearchParameters { get; }
+
+        public ITrainingModel Training { get; }
 
         public async Task<Parameter> Find(Problem problem, CancellationToken token)
         {
@@ -41,13 +41,13 @@ namespace Wikiled.MachineLearning.Svm.Parameters
             Guard.NotNull(() => problem, problem);
             crossValidation = double.MinValue;
             var parameter = (Parameter)SearchParameters.Default.Clone();
-            List<Task<(Parameter Parameter, double Accuracy)>> tasks = new List<Task<ValueTuple<Parameter, double>>>();
+            List<Task<(Parameter Parameter, double Accuracy)>> tasks = new List<Task<(Parameter, double)>>();
             foreach (var gamma in SearchParameters.Gamma)
             {
-                foreach (var cValue in SearchParameters.C)
+                foreach (var value in SearchParameters.C)
                 {
                     var gammaValue = gamma;
-                    tasks.Add(taskFactory.StartNew(() => Search(gammaValue, cValue, problem, token), token));
+                    tasks.Add(taskFactory.StartNew(() => Search(gammaValue, value, problem, token), token));
                 }
             }
 
@@ -58,10 +58,8 @@ namespace Wikiled.MachineLearning.Svm.Parameters
                 return parameter;
             }
 
-            var bestResult = results.Where(item => item.Parameter != null)
-                                    .OrderByDescending(item => item.Accuracy)
-                                    .First();
-          
+            var bestResult = results.Where(item => item.Parameter != null).OrderByDescending(item => item.Accuracy).First();
+
             log.Info("Found best: C:{0} Gamma:{1} Result:{2:F2}", bestResult.Item1.C, bestResult.Item1.Gamma, bestResult.Item2);
             parameter.C = bestResult.Parameter.C;
             parameter.Gamma = bestResult.Parameter.Gamma;
@@ -80,13 +78,12 @@ namespace Wikiled.MachineLearning.Svm.Parameters
             localParameters.Token = token;
             localParameters.C = cValue;
             localParameters.Gamma = gamma;
-            var test = training.PerformCrossValidation((Problem)problem.Clone(), localParameters, SearchParameters.Folds);
+            var test = Training.PerformCrossValidation((Problem)problem.Clone(), localParameters, SearchParameters.Folds);
             if (test > crossValidation)
             {
                 // possible race condition but we don't care it is just for logging - we don't use this value
                 Interlocked.Exchange(ref crossValidation, test);
                 log.Info("New MAXIMUM! C:{0} Gamma:{1} {2:F2}%", localParameters.C, localParameters.Gamma, test * 100);
-
             }
             else
             {
