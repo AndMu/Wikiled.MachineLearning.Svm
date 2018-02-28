@@ -6,10 +6,11 @@ namespace Wikiled.MachineLearning.Svm.Logic
 {
     public static class WeightCalculation
     {
-        public static Dictionary<int, double> GetWeights(double[] values)
+        public static Dictionary<int, double> GetWeights(int[] values)
         {
             Guard.NotNull(() => values, values);
             Guard.IsValid(() => values, values, doubles => doubles.Length > 0, "Array must be non-zero");
+
             // http://stats.stackexchange.com/questions/24959/a-priori-selection-of-svm-class-weights
             // training samples in class l1 om 1 and l2 -- in class 2, take C1 and C2 such that C1/C2 = l2/l1.
             Dictionary<int, List<double>> classSums = new Dictionary<int, List<double>>();

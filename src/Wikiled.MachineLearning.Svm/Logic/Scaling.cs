@@ -16,7 +16,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
         /// <returns>The Scaled problem</returns>
         public static Problem Scale(this IRangeTransform range, Problem prob)
         {
-            Problem scaledProblem = new Problem(prob.Count, new double[prob.Count], new Node[prob.Count][], prob.MaxIndex);
+            Problem scaledProblem = new Problem(prob.Count, new int[prob.Count], new Node[prob.Count][], prob.MaxIndex);
             for (int i = 0; i < scaledProblem.Count; i++)
             {
                 scaledProblem.X[i] = new Node[prob.X[i].Length];

@@ -19,6 +19,8 @@ namespace Wikiled.MachineLearning.Svm.Parameters
 
         public ITrainingModel Training { get; }
 
+        public GridSearchParameters SearchParameters { get; }
+
         public Task<Parameter> Find(Problem problem, CancellationToken token)
         {
             Guard.NotNull(() => problem, problem);

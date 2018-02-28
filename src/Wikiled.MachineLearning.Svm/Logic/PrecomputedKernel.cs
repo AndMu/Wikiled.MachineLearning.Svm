@@ -80,10 +80,10 @@ namespace Wikiled.MachineLearning.Svm.Logic
         /// <param name="rowLabels">The labels for the row items</param>
         /// <param name="columnLabels">The labels for the column items</param>
         /// <returns>A <see cref="Problem"/> object</returns>
-        public Problem Compute(double[] rowLabels, double[] columnLabels)
+        public Problem Compute(int[] rowLabels, double[] columnLabels)
         {
             List<Node[]> X = new List<Node[]>();
-            List<double> Y = new List<double>();
+            List<int> Y = new List<int>();
             int maxIndex = 0;
             for (int i = 0; i < columnLabels.Length; i++)
             {

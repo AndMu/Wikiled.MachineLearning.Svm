@@ -169,7 +169,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
 
                     subprob.Count = problem.Count - (end - begin);
                     subprob.X = new Node[subprob.Count][];
-                    subprob.Y = new double[subprob.Count];
+                    subprob.Y = new int[subprob.Count];
 
                     k = 0;
                     for (j = 0; j < begin; j++)
@@ -643,7 +643,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
                     int ci = count[i], cj = count[j];
                     subProb.Count = ci + cj;
                     subProb.X = new Node[subProb.Count][];
-                    subProb.Y = new double[subProb.Count];
+                    subProb.Y = new int[subProb.Count];
                     int k;
                     for (k = 0; k < ci; k++)
                     {
@@ -930,7 +930,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
         }
 
         // Platt's binary SVM Probablistic Output: an improvement from Lin et al.
-        private static void SigmoidTrain(int l, double[] decValues, double[] labels, double[] probAb)
+        private static void SigmoidTrain(int l, double[] decValues, int[] labels, double[] probAb)
         {
             double a, b;
             double prior1 = 0, prior0 = 0;
@@ -1354,7 +1354,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
 
                 subprob.Count = problem.Count - (end - begin);
                 subprob.X = new Node[subprob.Count][];
-                subprob.Y = new double[subprob.Count];
+                subprob.Y = new int[subprob.Count];
 
                 k = 0;
                 for (j = 0; j < begin; j++)

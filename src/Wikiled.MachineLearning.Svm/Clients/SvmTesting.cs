@@ -32,7 +32,7 @@ namespace Wikiled.MachineLearning.Svm.Clients
             this.trainedModel = trainedModel;
         }
 
-        public void Classify(IArffDataSet testDataSet)
+        public PredictionResult Classify(IArffDataSet testDataSet)
         {
             Guard.NotNull(() => testDataSet, testDataSet);
             log.Debug("Classify");
@@ -41,9 +41,11 @@ namespace Wikiled.MachineLearning.Svm.Clients
             for (int i = 0; i < result.Classes.Length; i++)
             {
                 var review = docs[i];
-                var classValue = ((IClassHeader)review.Class.Header).GetValueByClassId((int)result.Classes[i].Actual);
+                var classValue = ((IClassHeader)review.Class.Header).GetValueByClassId(result.Classes[i].Actual);
                 review.Class.Value = classValue;
             }
+
+            return result;
         }
 
         public double Test(IArffDataSet testingSet, string path)

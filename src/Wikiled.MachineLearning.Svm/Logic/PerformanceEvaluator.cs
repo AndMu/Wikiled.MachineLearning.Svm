@@ -42,7 +42,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
         /// <param name="resultsFile">Results file</param>
         /// <param name="correctLabels">The correct labels of each data item</param>
         /// <param name="category">The category to evaluate for</param>
-        public PerformanceEvaluator(string resultsFile, double[] correctLabels, double category)
+        public PerformanceEvaluator(string resultsFile, int[] correctLabels, double category)
         {
             ParseResults(correctLabels, category);
             computeStatistics();
@@ -183,7 +183,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
             }
         }
 
-        private void ParseResults(double[] labels, double category)
+        private void ParseResults(int[] labels, double category)
         {
             int confidenceIndex = -1;
             var retrievedLabels = result.Labels;

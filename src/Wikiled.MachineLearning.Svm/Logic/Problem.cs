@@ -22,7 +22,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
         /// <param name="y">The class labels</param>
         /// <param name="x">Vector data.</param>
         /// <param name="maxIndex">Maximum index for a vector</param>
-        public Problem(int count, double[] y, Node[][] x, int maxIndex)
+        public Problem(int count, int[] y, Node[][] x, int maxIndex)
         {
             Count = count;
             Y = y;
@@ -71,7 +71,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
         /// <summary>
         ///     Class labels.
         /// </summary>
-        public double[] Y { get; set; }
+        public int[] Y { get; set; }
 
         /// <summary>
         ///     Reads a problem from a stream.
@@ -86,7 +86,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
             while ((line = input.ReadLine()) != null)
             {
                 string[] parts = line.Trim().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-                DataLine dataLine = new DataLine(double.Parse(parts[0]));
+                DataLine dataLine = new DataLine((int)double.Parse(parts[0]));
                 lines.Add(dataLine);
                 for (int i = 1; i < parts.Length; i++)
                 {
@@ -108,7 +108,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
         public static Problem Read(DataLine[] lines)
         {
             TemporaryCulture.Start();
-            List<double> vy = new List<double>();
+            List<int> vy = new List<int>();
             List<Node[]> vx = new List<Node[]>();
             int maxIndex = 0;
 
@@ -139,7 +139,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
 
         public object Clone()
         {
-            var y = (double[])Y.Clone();
+            var y = (int[])Y.Clone();
             var xCloned = new Node[X.Length][];
             for (int i = 0; i < Count; i++)
             {
@@ -160,7 +160,6 @@ namespace Wikiled.MachineLearning.Svm.Logic
         public void Write(Stream stream)
         {
             TemporaryCulture.Start();
-
             using (StreamWriter output = new StreamWriter(stream))
             {
                 for (int i = 0; i < Count; i++)
@@ -170,6 +169,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
                     {
                         output.Write(" {0}:{1}", X[i][j].Index, X[i][j].Value);
                     }
+
                     output.WriteLine();
                 }
 

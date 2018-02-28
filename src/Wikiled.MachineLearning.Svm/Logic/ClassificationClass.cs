@@ -4,17 +4,17 @@ namespace Wikiled.MachineLearning.Svm.Logic
 {
     public class ClassificationClass
     {
-        readonly List<double> values = new List<double>();
+        private readonly List<double> values = new List<double>();
+
+        public int Actual { get; set; }
+
+        public int Target { get; set; }
+
+        public double[] Values => values.ToArray();
 
         public void Add(double value)
         {
             values.Add(value);
         }
-
-        public double[] Values => values.ToArray();
-
-        public double Target { get; set; }
-
-        public double Actual { get; set; }
     }
 }

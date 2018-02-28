@@ -7,7 +7,7 @@ namespace Wikiled.MachineLearning.Svm.Data
     {
         private readonly Dictionary<int, Node> values = new Dictionary<int, Node>();
 
-        public DataLine(double? value)
+        public DataLine(int? value)
         {
             Value = value;
             MaxIndex = 0;
@@ -17,7 +17,7 @@ namespace Wikiled.MachineLearning.Svm.Data
 
         public int TotalValues => values.Count;
 
-        public double? Value { get; }
+        public int? Value { get; }
 
         public Node AddValue(int index, double value)
         {

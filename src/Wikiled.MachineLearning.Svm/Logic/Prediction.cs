@@ -26,8 +26,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
             int correct = 0;
             PredictionResult result = new PredictionResult();
             SvmType svmType = Procedures.SvmGetSvmType(model);
-            int nrClass = Procedures.SvmGetNrClass(model);
-            int[] labels = new int[nrClass];
+            int numberOfClasses = Procedures.SvmGetNrClass(model);
+            int[] labels = new int[numberOfClasses];
             double[] probEstimates = null;
 
             if (predictProbability)
@@ -38,43 +38,51 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 }
                 else
                 {
-                    Procedures.SvmGetLabels(model, labels);
-                    probEstimates = new double[nrClass];
-                    for (int j = 0; j < nrClass; j++)
-                    {
-                        result.AddLabel(labels[j]);
-                    }
+                    probEstimates = new double[numberOfClasses];
                 }
+            }
+
+            Procedures.SvmGetLabels(model, labels);
+            for (int j = 0; j < numberOfClasses; j++)
+            {
+                result.AddLabel(labels[j]);
             }
 
             for (int i = 0; i < problem.Count; i++)
             {
                 ClassificationClass item = new ClassificationClass();
-                result.Set(item);
-
                 item.Target = problem.Y[i];
                 Node[] xValues = problem.X[i];
 
                 if (predictProbability &&
                     (svmType == SvmType.C_SVC || svmType == SvmType.NU_SVC))
                 {
-                    item.Actual = Procedures.SvmPredictProbability(model, xValues, probEstimates);
-                    for (int j = 0; j < nrClass; j++)
+                    Procedures.SvmPredictProbability(model, xValues, probEstimates);
+                    double max = 0;
+                    for (int j = 0; j < numberOfClasses; j++)
                     {
+                        if (probEstimates[j] > max)
+                        {
+                            max = probEstimates[j];
+                            item.Actual = labels[j];
+                        }
+
                         item.Add(probEstimates[j]);
                     }
                 }
                 else
                 {
-                    item.Actual = Procedures.SvmPredict(model, xValues);
+                    item.Actual = (int)Procedures.SvmPredict(model, xValues);
                 }
 
                 if (item.Actual == item.Target)
                 {
                     correct++;
                 }
+
+                result.Set(item);
             }
-            
+
             result.CorrectProbability = (double)correct / problem.Count;
             return result;
         }
@@ -104,8 +112,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 throw new Exception("Model type " + svmType + " unable to predict probabilities.");
             }
 
-            int nr_class = Procedures.SvmGetNrClass(model);
-            double[] probEstimates = new double[nr_class];
+            int numberClass = Procedures.SvmGetNrClass(model);
+            double[] probEstimates = new double[numberClass];
             Procedures.SvmPredictProbability(model, x, probEstimates);
             return probEstimates;
         }

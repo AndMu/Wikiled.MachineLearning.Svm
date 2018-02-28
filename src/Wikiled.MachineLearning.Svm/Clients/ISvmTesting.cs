@@ -7,7 +7,7 @@ namespace Wikiled.MachineLearning.Svm.Clients
     {
         IArffDataSet CreateTestDataset();
 
-        void Classify(IArffDataSet testDataSet);
+        PredictionResult Classify(IArffDataSet testDataSet);
 
         double Test(IArffDataSet testingSet, string path);
 

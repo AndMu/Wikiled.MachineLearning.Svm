@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using Wikiled.MachineLearning.Mathematics;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
@@ -17,45 +17,16 @@ namespace Wikiled.MachineLearning.Svm.Logic
 
         public int Total => classes.Count;
 
+        public PrecisionRecallCalculator<int> Statistics { get; } = new PrecisionRecallCalculator<int>();
+
         public void AddLabel(int label)
         {
             labels.Add(label);
         }
 
-        public double CalculatePrecision(double clasificationClass)
-        {
-            double totalPositive = GetTotalTruePositiveClassifications(clasificationClass);
-            double totalFalsePositive = GetTotalFalsePositiveClassifications(clasificationClass);
-            var value = totalPositive / (totalPositive + totalFalsePositive);
-            return value;
-        }
-
-        public double CalculateRecall(double clasificationClass)
-        {
-            double totalPositive = GetTotalTruePositiveClassifications(clasificationClass);
-            double totalFalseNegative = GetTotalFalseNegativeClassifications(clasificationClass);
-
-            var value = totalPositive / (totalPositive + totalFalseNegative);
-            return value;
-        }
-
-        public int GetTotalFalseNegativeClassifications(double clasificationClass)
-        {
-            return classes.Count(item => item.Actual != item.Target && item.Actual != clasificationClass);
-        }
-
-        public int GetTotalFalsePositiveClassifications(double clasificationClass)
-        {
-            return classes.Count(item => item.Actual != item.Target && item.Actual == clasificationClass);
-        }
-
-        public int GetTotalTruePositiveClassifications(double clasificationClass)
-        {
-            return classes.Count(item => item.Actual == item.Target && item.Actual == clasificationClass);
-        }
-
         public void Set(ClassificationClass item)
         {
+            Statistics.Add(item.Target, item.Actual);
             classes.Add(item);
         }
     }
