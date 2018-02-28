@@ -8,6 +8,8 @@ namespace Wikiled.MachineLearning.Svm.Parameters
     {
         ITrainingModel Training { get; }
 
+        GridSearchParameters SearchParameters { get; }
+
         Task<Parameter> Find(Problem problem, CancellationToken token);
     }
 }
