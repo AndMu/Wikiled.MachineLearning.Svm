@@ -86,7 +86,7 @@ namespace Wikiled.MachineLearning.Svm.Clients
                 var newReview = dataSet.AddDocument();
                 foreach (var word in review.GetRecords())
                 {
-                    var addedWord = newReview.Resolve(word.Header);
+                    var addedWord = newReview.AddRecord(word.Header);
                     if (addedWord == null)
                     {
                         continue;
