@@ -41,7 +41,11 @@ namespace Wikiled.MachineLearning.Svm.Logic
             log.Debug("Save: {0}", path);
             path.EnsureDirectoryExistence();
             result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
-            result.Header.XmlSerialize().Save(Path.Combine(path, headerFile));
+            if (result.DataSet.TotalDocuments > 0)
+            {
+                result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
+            }
+
             using (FileStream stream = new FileStream(Path.Combine(path, arffFile), FileMode.Create))
             {
                 SaveArff(result.DataSet, stream);
@@ -58,7 +62,11 @@ namespace Wikiled.MachineLearning.Svm.Logic
             Guard.NotNull(() => result, result);
             Guard.NotNullOrEmpty(() => path, path);
             log.Debug("SaveCompressed: {0}", path);
-            result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
+            if (result.DataSet.TotalDocuments > 0)
+            {
+                result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
+            }
+
             using (FileStream zipToOpen = new FileStream(path, FileMode.Create))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))

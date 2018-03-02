@@ -63,7 +63,11 @@ namespace Wikiled.MachineLearning.Svm.Extensions
             data.Save(Path.Combine(path, "data.arff"));
             if (header != null)
             {
-                header.AverageVectorSize = data.Documents.Average(item => item.Count);
+                if (data.TotalDocuments > 0)
+                {
+                    header.AverageVectorSize = data.Documents.Average(item => item.Count);
+                }
+                
                 header.XmlSerialize().Save(Path.Combine(path, "header.xml"));
             }
         }
