@@ -24,7 +24,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
             bool predictProbability)
         {
             int correct = 0;
-            PredictionResult result = new PredictionResult();
+            PredictionResult result = new PredictionResult(model.Parameter);
             SvmType svmType = Procedures.SvmGetSvmType(model);
             int numberOfClasses = Procedures.SvmGetNrClass(model);
             int[] labels = new int[numberOfClasses];

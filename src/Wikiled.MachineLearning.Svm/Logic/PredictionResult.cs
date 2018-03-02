@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Wikiled.Common.Arguments;
 using Wikiled.MachineLearning.Mathematics;
+using Wikiled.MachineLearning.Svm.Parameters;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
@@ -9,7 +11,15 @@ namespace Wikiled.MachineLearning.Svm.Logic
 
         private readonly List<int> labels = new List<int>();
 
+        public PredictionResult(Parameter parameter)
+        {
+            Guard.NotNull(() => parameter, parameter);
+            Parameter = parameter;
+        }
+
         public ClassificationClass[] Classes => classes.ToArray();
+
+        public Parameter Parameter { get; }
 
         public double CorrectProbability { get; set; }
 
