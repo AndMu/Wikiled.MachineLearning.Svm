@@ -45,6 +45,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
             }
 
+            result.Header.XmlSerialize().Save(Path.Combine(path, headerFile));
+
             using (FileStream stream = new FileStream(Path.Combine(path, arffFile), FileMode.Create))
             {
                 SaveArff(result.DataSet, stream);
