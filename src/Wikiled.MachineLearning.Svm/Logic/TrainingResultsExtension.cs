@@ -40,7 +40,6 @@ namespace Wikiled.MachineLearning.Svm.Logic
             Guard.NotNullOrEmpty(() => path, path);
             log.Debug("Save: {0}", path);
             path.EnsureDirectoryExistence();
-            result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
             if (result.DataSet.TotalDocuments > 0)
             {
                 result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
