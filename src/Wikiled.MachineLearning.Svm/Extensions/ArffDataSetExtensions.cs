@@ -59,7 +59,7 @@ namespace Wikiled.MachineLearning.Svm.Extensions
             Guard.NotNull(() => data, data);
             Guard.NotNullOrEmpty(() => path, path);
             Guard.IsValid(() => data, data, item => item.Documents.Any(), "Reviews should be at least one");
-            DirectoryInfoExtensions.EnsureDirectoryExistence(path);
+            path.EnsureDirectoryExistence();
             data.Save(Path.Combine(path, "data.arff"));
             if (header != null)
             {

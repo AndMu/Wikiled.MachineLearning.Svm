@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Xml.Linq;
 using NLog;
 using Wikiled.Arff.Persistence;
@@ -39,7 +40,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
             Guard.NotNullOrEmpty(() => path, path);
             log.Debug("Save: {0}", path);
             path.EnsureDirectoryExistence();
-
+            result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
             result.Header.XmlSerialize().Save(Path.Combine(path, headerFile));
             using (FileStream stream = new FileStream(Path.Combine(path, arffFile), FileMode.Create))
             {
@@ -57,7 +58,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
             Guard.NotNull(() => result, result);
             Guard.NotNullOrEmpty(() => path, path);
             log.Debug("SaveCompressed: {0}", path);
-
+            result.Header.AverageVectorSize = result.DataSet.Documents.Average(item => item.Count);
             using (FileStream zipToOpen = new FileStream(path, FileMode.Create))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))

@@ -1,5 +1,4 @@
 ﻿using Wikiled.Arff.Normalization;
-using Wikiled.MachineLearning.Svm.Parameters;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
