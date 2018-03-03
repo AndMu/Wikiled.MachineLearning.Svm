@@ -1,13 +1,13 @@
 using System;
 using System.Globalization;
 using System.IO;
-using Node = Wikiled.MachineLearning.Svm.Data.Node;
+using Wikiled.MachineLearning.Svm.Data;
 
 namespace Wikiled.MachineLearning.Svm.Logic
 {
     /// <summary>
-    /// A transform which learns the mean and variance of a sample set and uses these to transform new data
-    /// so that it has zero mean and unit variance.
+    ///     A transform which learns the mean and variance of a sample set and uses these to transform new data
+    ///     so that it has zero mean and unit variance.
     /// </summary>
     public class GaussianTransform : IRangeTransform
     {
@@ -16,20 +16,31 @@ namespace Wikiled.MachineLearning.Svm.Logic
         private readonly double[] stddevs;
 
         /// <summary>
-        /// Determines the Gaussian transform for the provided problem.
+        ///     Constructor.
+        /// </summary>
+        /// <param name="means">Means in each dimension</param>
+        /// <param name="stddevs">Standard deviation in each dimension</param>
+        public GaussianTransform(double[] means, double[] stddevs)
+        {
+            this.means = means;
+            this.stddevs = stddevs;
+        }
+
+        /// <summary>
+        ///     Determines the Gaussian transform for the provided problem.
         /// </summary>
         /// <param name="prob">The Problem to analyze</param>
         /// <returns>The Gaussian transform for the problem</returns>
         public static GaussianTransform Compute(Problem prob)
         {
-            int[] counts = new int[prob.MaxIndex];
-            double[] means = new double[prob.MaxIndex];
+            int[] counts = new int[prob.MaxIndex + 1];
+            double[] means = new double[prob.MaxIndex + 1];
             foreach (Node[] sample in prob.X)
             {
                 for (int i = 0; i < sample.Length; i++)
                 {
-                    means[sample[i].Index - 1] += sample[i].Value;
-                    counts[sample[i].Index - 1]++;
+                    means[sample[i].Index] += sample[i].Value;
+                    counts[sample[i].Index]++;
                 }
             }
 
@@ -43,13 +54,13 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 means[i] /= counts[i];
             }
 
-            double[] stddevs = new double[prob.MaxIndex];
+            double[] stddevs = new double[prob.MaxIndex + 1];
             foreach (Node[] sample in prob.X)
             {
                 for (int i = 0; i < sample.Length; i++)
                 {
-                    double diff = sample[i].Value - means[sample[i].Index - 1];
-                    stddevs[sample[i].Index - 1] += diff * diff;
+                    double diff = sample[i].Value - means[sample[i].Index];
+                    stddevs[sample[i].Index] += diff * diff;
                 }
             }
 
@@ -59,7 +70,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 {
                     continue;
                 }
-                stddevs[i] /= (counts[i] - 1);
+
+                stddevs[i] /= counts[i] - 1;
                 stddevs[i] = Math.Sqrt(stddevs[i]);
             }
 
@@ -67,39 +79,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
         }
 
         /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="means">Means in each dimension</param>
-        /// <param name="stddevs">Standard deviation in each dimension</param>
-        public GaussianTransform(double[] means, double[] stddevs)
-        {
-            this.means = means;
-            this.stddevs = stddevs;
-        }
-
-        /// <summary>
-        /// Saves the transform to the disk.  The samples are not stored, only the 
-        /// statistics.
-        /// </summary>
-        /// <param name="stream">The destination stream</param>
-        public void Write(Stream stream)
-        {
-            TemporaryCulture.Start();
-
-            using (StreamWriter output = new StreamWriter(stream))
-            {
-                output.WriteLine(means.Length);
-                for (int i = 0; i < means.Length; i++)
-                {
-                    output.WriteLine("{0} {1}", means[i], stddevs[i]);
-                }
-                output.Flush();
-            }
-            TemporaryCulture.Stop();
-        }
-
-        /// <summary>
-        /// Reads a GaussianTransform from the provided stream.
+        ///     Reads a GaussianTransform from the provided stream.
         /// </summary>
         /// <param name="stream">The source stream</param>
         /// <returns>The transform</returns>
@@ -114,33 +94,18 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 double[] stddevs = new double[length];
                 for (int i = 0; i < length; i++)
                 {
-                    string[] parts = input.ReadLine().Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] parts = input.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     means[i] = double.Parse(parts[0], CultureInfo.InvariantCulture);
                     stddevs[i] = double.Parse(parts[1], CultureInfo.InvariantCulture);
                 }
-                TemporaryCulture.Stop();
 
+                TemporaryCulture.Stop();
                 return new GaussianTransform(means, stddevs);
             }
         }
 
         /// <summary>
-        /// Saves the transform to the disk.  The samples are not stored, only the 
-        /// statistics.
-        /// </summary>
-        /// <param name="filename">The destination filename</param>
-        /// <param name="transform">The transform</param>
-        public void Write(string filename, GaussianTransform transform)
-        {
-            using (FileStream output = File.Open(filename, FileMode.Create))
-            {
-                Write(output);
-                output.Close();
-            }
-        }
-
-        /// <summary>
-        /// Reads a GaussianTransform from the provided stream.
+        ///     Reads a GaussianTransform from the provided stream.
         /// </summary>
         /// <param name="filename">The source filename</param>
         /// <returns>The transform</returns>
@@ -153,24 +118,25 @@ namespace Wikiled.MachineLearning.Svm.Logic
         }
 
         /// <summary>
-        /// Transform the input value using the transform stored for the provided index.
+        ///     Transform the input value using the transform stored for the provided index.
         /// </summary>
         /// <param name="input">Input value</param>
         /// <param name="index">Index of the transform to use</param>
         /// <returns>The transformed value</returns>
         public double Transform(double input, int index)
         {
-            index--;
             if (stddevs[index] == 0)
             {
                 return 0;
             }
+
             double diff = input - means[index];
             diff /= stddevs[index];
             return diff;
         }
+
         /// <summary>
-        /// Transforms the input array.
+        ///     Transforms the input array.
         /// </summary>
         /// <param name="input">The array to transform</param>
         /// <returns>The transformed array</returns>
@@ -185,6 +151,44 @@ namespace Wikiled.MachineLearning.Svm.Logic
             }
 
             return output;
+        }
+
+        /// <summary>
+        ///     Saves the transform to the disk.  The samples are not stored, only the
+        ///     statistics.
+        /// </summary>
+        /// <param name="stream">The destination stream</param>
+        public void Write(Stream stream)
+        {
+            TemporaryCulture.Start();
+
+            using (StreamWriter output = new StreamWriter(stream))
+            {
+                output.WriteLine(means.Length);
+                for (int i = 0; i < means.Length; i++)
+                {
+                    output.WriteLine("{0} {1}", means[i], stddevs[i]);
+                }
+
+                output.Flush();
+            }
+
+            TemporaryCulture.Stop();
+        }
+
+        /// <summary>
+        ///     Saves the transform to the disk.  The samples are not stored, only the
+        ///     statistics.
+        /// </summary>
+        /// <param name="filename">The destination filename</param>
+        /// <param name="transform">The transform</param>
+        public void Write(string filename, GaussianTransform transform)
+        {
+            using (FileStream output = File.Open(filename, FileMode.Create))
+            {
+                Write(output);
+                output.Close();
+            }
         }
     }
 }

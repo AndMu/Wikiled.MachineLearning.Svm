@@ -30,6 +30,9 @@
   <None Update="Data\label.dat">
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
   </None>
+  <None Update="Data\problem.arff">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
   <None Update="Data\testing_data_1.arff">
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
   </None>

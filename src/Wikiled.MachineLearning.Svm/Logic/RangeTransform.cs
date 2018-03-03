@@ -66,8 +66,8 @@ namespace Wikiled.MachineLearning.Svm.Logic
         /// <returns>The Range transform for the problem</returns>
         public static RangeTransform Compute(Problem prob, double lowerBound = -1, double upperBound = 1)
         {
-            double[] minVals = new double[prob.MaxIndex];
-            double[] maxVals = new double[prob.MaxIndex];
+            double[] minVals = new double[prob.MaxIndex + 1];
+            double[] maxVals = new double[prob.MaxIndex + 1];
             for (int i = 0; i < prob.MaxIndex; i++)
             {
                 minVals[i] = double.MaxValue;
@@ -78,7 +78,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
             {
                 for (int j = 0; j < prob.X[i].Length; j++)
                 {
-                    int index = prob.X[i][j].Index - 1;
+                    int index = prob.X[i][j].Index;
                     double value = prob.X[i][j].Value;
                     minVals[index] = Math.Min(minVals[index], value);
                     maxVals[index] = Math.Max(maxVals[index], value);
@@ -132,7 +132,6 @@ namespace Wikiled.MachineLearning.Svm.Logic
         public static RangeTransform Read(Stream stream)
         {
             TemporaryCulture.Start();
-
             StreamReader input = new StreamReader(stream);
             int length = int.Parse(input.ReadLine());
             double[] inputStart = new double[length];
@@ -149,14 +148,17 @@ namespace Wikiled.MachineLearning.Svm.Logic
                 {
                     throw new NullReferenceException("Expected Line");
                 }
+
                 if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
+
                 if (line.IndexOf("Scale", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     break;
                 }
+
                 parts = line.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                 inputStart[i] = double.Parse(parts[1]);
                 inputEnd[i] = double.Parse(parts[2]);
@@ -217,7 +219,6 @@ namespace Wikiled.MachineLearning.Svm.Logic
         /// <returns>The scaled value</returns>
         public double Transform(double input, int index)
         {
-            index--;
             double tmp = input - inputStart[index];
             if (inputScale[index] == 0)
             {
