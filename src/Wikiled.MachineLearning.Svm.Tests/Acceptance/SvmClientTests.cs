@@ -2,6 +2,8 @@
 using NUnit.Framework;
 using Wikiled.Arff.Persistence;
 using Wikiled.MachineLearning.Svm.Clients;
+using Wikiled.MachineLearning.Svm.Data;
+using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
@@ -20,9 +22,11 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
                               : ArffDataSet.LoadSimple(file);
             file = Path.Combine(TestContext.CurrentContext.TestDirectory, "data", modelName);
             var model = Model.Read(file);
-            var client = new SvmTesting(dataSet, model);
 
-            var dataHolder = client.CreateTestDataset();
+            IProblemFactory factory = new ProblemFactory(dataSet);
+            var client = new SvmTesting(model, factory);
+
+            var dataHolder = dataSet.CreateTestDataset();
             var review = dataHolder.AddDocument();
             review.AddRecord("Good").Value = 2;
             review.AddRecord("Bad").Value = 1;

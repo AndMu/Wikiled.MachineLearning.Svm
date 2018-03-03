@@ -5,8 +5,6 @@ namespace Wikiled.MachineLearning.Svm.Clients
 {
     public interface ISvmTesting
     {
-        IArffDataSet CreateTestDataset();
-
         PredictionResult Classify(IArffDataSet testDataSet);
 
         double Test(IArffDataSet testingSet, string path);

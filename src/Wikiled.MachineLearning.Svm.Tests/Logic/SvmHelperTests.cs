@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikiled.Arff.Persistence;
 using Wikiled.MachineLearning.Svm.Clients;
+using Wikiled.MachineLearning.Svm.Data;
 using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Tests.Logic
@@ -45,6 +46,29 @@ namespace Wikiled.MachineLearning.Svm.Tests.Logic
         }
 
         [Test]
+        public async Task Classify()
+        {
+            var problemFactory = new ProblemFactory(threeClassDataset);
+            SvmTraining training = new SvmTraining(problemFactory, threeClassDataset);
+            var parameters = training.SelectParameters(TrainingHeader.CreateDefault(), CancellationToken.None);
+            var results = await training.Train(parameters).ConfigureAwait(false);
+            results.Model.Write(Path.Combine(TestContext.CurrentContext.TestDirectory, "classify.dat"));
+            var testSet = ArffDataSet.Create<PositivityType>("Test");
+            testSet.UseTotal = true;
+
+            var positive = testSet.AddDocument();
+            positive.AddRecord("Good");
+
+            var negative = testSet.AddDocument();
+            negative.AddRecord("Bad");
+
+            SvmTesting testing = new SvmTesting(results.Model, problemFactory);
+            testing.Classify(testSet);
+            Assert.AreEqual(PositivityType.Positive, positive.Class.Value);
+            Assert.AreEqual(PositivityType.Negative, negative.Class.Value);
+        }
+
+        [Test]
         public async Task TestMultiClass()
         {
             var dataSet = ArffDataSet.CreateSimple("Test");
@@ -65,7 +89,8 @@ namespace Wikiled.MachineLearning.Svm.Tests.Logic
                 three.AddRecord("Some");
             }
 
-            SvmTraining training = new SvmTraining(dataSet);
+            var problemFactory = new ProblemFactory(dataSet);
+            SvmTraining training = new SvmTraining(problemFactory, dataSet);
             var parameters = training.SelectParameters(TrainingHeader.CreateDefault(), CancellationToken.None);
             var results = await training.Train(parameters).ConfigureAwait(false);
 
@@ -74,7 +99,7 @@ namespace Wikiled.MachineLearning.Svm.Tests.Logic
             results.Model.Write(Path.Combine(TestContext.CurrentContext.TestDirectory, "label.dat"));
             var testFile = ArffDataSet.LoadSimple(file);
 
-            SvmTesting testing = new SvmTesting(dataSet, results.Model);
+            SvmTesting testing = new SvmTesting(results.Model, problemFactory);
             var result = testing.Test(testFile, Path.Combine(TestContext.CurrentContext.TestDirectory, "."));
             Assert.AreEqual(1, result);
         }
@@ -82,37 +107,16 @@ namespace Wikiled.MachineLearning.Svm.Tests.Logic
         [Test]
         public async Task TestTwoClass()
         {
-            SvmTraining training = new MachineLearning.Svm.Clients.SvmTraining(twoClassDataset);
+            var problemFactory = new ProblemFactory(twoClassDataset);
+            SvmTraining training = new SvmTraining(problemFactory, twoClassDataset);
             var parameters = training.SelectParameters(TrainingHeader.CreateDefault(), CancellationToken.None);
             var results = await training.Train(parameters).ConfigureAwait(false);
             var file = Path.Combine(TestContext.CurrentContext.TestDirectory, "data.arff");
             threeClassDataset.Save(file);
             var testFile = ArffDataSet.LoadSimple(file);
-            SvmTesting testing = new SvmTesting(twoClassDataset, results.Model);
+            SvmTesting testing = new SvmTesting(results.Model, problemFactory);
             var result = testing.Test(testFile, Path.Combine(TestContext.CurrentContext.TestDirectory, "."));
             Assert.AreEqual(1, result);
-        }
-
-        [Test]
-        public async Task Classify()
-        {
-            SvmTraining training = new SvmTraining(threeClassDataset);
-            var parameters = training.SelectParameters(TrainingHeader.CreateDefault(), CancellationToken.None);
-            var results = await training.Train(parameters).ConfigureAwait(false);
-            results.Model.Write(Path.Combine(TestContext.CurrentContext.TestDirectory, "classify.dat"));
-            var testSet = ArffDataSet.Create<PositivityType>("Test");
-            testSet.UseTotal = true;
-
-            var positive = testSet.AddDocument();
-            positive.AddRecord("Good");
-
-            var negative = testSet.AddDocument();
-            negative.AddRecord("Bad");
-
-            SvmTesting testing = new SvmTesting(threeClassDataset, results.Model);
-            testing.Classify(testSet);
-            Assert.AreEqual(PositivityType.Positive, positive.Class.Value);
-            Assert.AreEqual(PositivityType.Negative, negative.Class.Value);
         }
     }
 }

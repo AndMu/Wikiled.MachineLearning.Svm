@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Wikiled.Arff.Persistence;
+using Wikiled.MachineLearning.Svm.Data;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 
@@ -17,9 +18,10 @@ namespace Wikiled.MachineLearning.Svm.Tests.Parameters
         [SetUp]
         public void Setup()
         {
-            factory = new ParametersSelectionFactory(Task.Factory);
             dataSet = ArffDataSet.CreateSimple("Test");
             dataSet.Header.RegisterNominalClass("One");
+            var problemFactory = new ProblemFactory(dataSet);
+            factory = new ParametersSelectionFactory(Task.Factory, problemFactory);
         }
 
         [Test]

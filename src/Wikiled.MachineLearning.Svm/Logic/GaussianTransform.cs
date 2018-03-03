@@ -32,6 +32,7 @@ namespace Wikiled.MachineLearning.Svm.Logic
                     counts[sample[i].Index - 1]++;
                 }
             }
+
             for (int i = 0; i < prob.MaxIndex; i++)
             {
                 if (counts[i] == 0)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using NLog;
 using NUnit.Framework;
 using Wikiled.Arff.Persistence;
-using Wikiled.MachineLearning.Svm.Extensions;
+using Wikiled.MachineLearning.Svm.Data;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 
@@ -41,15 +41,16 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
             model.Train(problem, parameters);
         }
 
-        [Test]
-        public void PerformCrossValidation()
+        [TestCase(true, 0.81)]
+        [TestCase(false, 0.88)]
+        public void PerformCrossValidation(bool scaling, double expected)
         {
             log.Info("Test");
-            var problem = LoadData();
+            var problem = LoadData(scaling);
             parameters.Weights = WeightCalculation.GetWeights(problem.Y);
 
             double test = model.PerformCrossValidation(problem, parameters, 5);
-            Assert.AreEqual(0.88, Math.Round(test, 2));
+            Assert.AreEqual(expected, Math.Round(test, 2));
         }
 
         [Test]
@@ -75,11 +76,17 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
             Assert.IsTrue(task.IsFaulted);
         }
 
-        private Problem LoadData()
+        private Problem LoadData(bool withScaling = false)
         {
             var file = Path.Combine(TestContext.CurrentContext.TestDirectory, @".\Data\data.arff");
             var arff = ArffDataSet.Load<PositivityType>(file);
-            return arff.GetProblem();
+            IProblemFactory factory = new ProblemFactory(arff);
+            if (withScaling)
+            {
+                factory = factory.WithRangeScaling();
+            }
+
+            return factory.Construct(arff).GetProblem();
         }
     }
 }

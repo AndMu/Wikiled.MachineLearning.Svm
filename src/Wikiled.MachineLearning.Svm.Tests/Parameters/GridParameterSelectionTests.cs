@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Wikiled.Arff.Persistence;
-using Wikiled.MachineLearning.Svm.Extensions;
+using Wikiled.MachineLearning.Svm.Data;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 
@@ -41,7 +41,8 @@ namespace Wikiled.MachineLearning.Svm.Tests.Parameters
             var one = dataSet.AddDocument();
             one.Class.Value = "One";
             one.AddRecord("Good");
-            problem = dataSet.GetProblem();
+            IProblemFactory factory = new ProblemFactory(dataSet);
+            problem = factory.Construct(dataSet).GetProblem();
             resetEvent = new ManualResetEvent(false);
         }
 

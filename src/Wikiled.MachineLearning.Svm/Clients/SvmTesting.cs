@@ -6,7 +6,7 @@ using Wikiled.Arff.Persistence;
 using Wikiled.Arff.Persistence.Headers;
 using Wikiled.Common.Arguments;
 using Wikiled.Common.Extensions;
-using Wikiled.MachineLearning.Svm.Extensions;
+using Wikiled.MachineLearning.Svm.Data;
 using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Clients
@@ -15,21 +15,20 @@ namespace Wikiled.MachineLearning.Svm.Clients
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        private readonly IArffDataSet trainingVectorSpace;
-
         private readonly Model trainedModel;
+
+        private readonly IProblemFactory problemFactory;
 
         /// <summary>
         /// Construtor
         /// </summary>
-        /// <param name="trainingVectorSpace">Required to know feature space</param>
         /// <param name="trainedModel">Trained model</param>
-        public SvmTesting(IArffDataSet trainingVectorSpace, Model trainedModel)
+        public SvmTesting(Model trainedModel, IProblemFactory problemFactory)
         {
-            Guard.NotNull(() => trainingVectorSpace, trainingVectorSpace);
             Guard.NotNull(() => trainedModel, trainedModel);
-            this.trainingVectorSpace = trainingVectorSpace;
+            Guard.NotNull(() => problemFactory, problemFactory);
             this.trainedModel = trainedModel;
+            this.problemFactory = problemFactory;
         }
 
         public PredictionResult Classify(IArffDataSet testDataSet)
@@ -63,43 +62,15 @@ namespace Wikiled.MachineLearning.Svm.Clients
                 }
             }
 
-            trainingVectorSpace.Save(Path.Combine(path, $"testing_data_{result.CorrectProbability}.arff"));
             return result.CorrectProbability;
         }
 
-        public IArffDataSet CreateTestDataset()
-        {
-            return ArffDataSet.CreateFixed((IHeadersWordsHandling)trainingVectorSpace.Header.Clone(), "Test");
-        }
 
         public PredictionResult Test(IArffDataSet testingSet)
         {
             Guard.NotNull(() => testingSet, testingSet);
-            var dataSet = CreateTestDataset();
-            foreach (var review in testingSet.Documents)
-            {
-                if (review.Count == 0)
-                {
-                    continue;
-                }
-
-                var newReview = dataSet.AddDocument();
-                foreach (var word in review.GetRecords())
-                {
-                    var addedWord = newReview.AddRecord(word.Header);
-                    if (addedWord == null)
-                    {
-                        continue;
-                    }
-
-                    addedWord.Value = word.Value;
-                }
-
-                newReview.Class.Value = review.Class.Value;
-            }
-
-            Problem testing = dataSet.GetProblem();
-            return Prediction.Predict(testing, trainedModel, false);
+            var problemSource = problemFactory.Construct(testingSet);
+            return Prediction.Predict(problemSource.GetProblem(), trainedModel, false);
         }
     }
 }

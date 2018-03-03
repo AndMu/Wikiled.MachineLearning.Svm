@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using NLog;
 using Wikiled.Arff.Persistence;
 using Wikiled.Common.Arguments;
-using Wikiled.MachineLearning.Svm.Extensions;
+using Wikiled.MachineLearning.Svm.Data;
 using Wikiled.MachineLearning.Svm.Logic;
 using Wikiled.MachineLearning.Svm.Parameters;
 
@@ -14,11 +14,15 @@ namespace Wikiled.MachineLearning.Svm.Clients
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
+        private readonly IProblemFactory problemFactory;
+
         private readonly IArffDataSet dataSet;
 
-        public SvmTraining(IArffDataSet dataSet)
+        public SvmTraining(IProblemFactory problemFactory, IArffDataSet dataSet)
         {
+            Guard.NotNull(() => problemFactory, problemFactory);
             Guard.NotNull(() => dataSet, dataSet);
+            this.problemFactory = problemFactory;
             this.dataSet = dataSet;
         }
 
@@ -42,7 +46,7 @@ namespace Wikiled.MachineLearning.Svm.Clients
             // https://www.quora.com/Support-Vector-Machines/SVM-performance-depends-on-scaling-and-normalization-Is-this-considered-a-drawback
             header.Normalization = dataSet.Normalization;
 
-            ParametersSelectionFactory factory = new ParametersSelectionFactory(taskFactory);
+            ParametersSelectionFactory factory = new ParametersSelectionFactory(taskFactory, problemFactory);
             var selection = factory.Create(header, dataSet);
             return selection;
         }
@@ -50,7 +54,7 @@ namespace Wikiled.MachineLearning.Svm.Clients
         public async Task<TrainingResults> Train(IParameterSelection selection)
         {
             Guard.NotNull(() => selection, selection);
-            Problem problem = dataSet.GetProblem();
+            Problem problem = problemFactory.Construct(dataSet).GetProblem();
             var parameters = await selection.Find(problem, CancellationToken.None).ConfigureAwait(false);
 
             // it is reasonable to choose values between 1 and 10^15

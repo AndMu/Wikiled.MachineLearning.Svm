@@ -4,21 +4,25 @@ using System.Threading.Tasks;
 using NLog;
 using Wikiled.Arff.Persistence;
 using Wikiled.Common.Arguments;
-using Wikiled.MachineLearning.Svm.Extensions;
+using Wikiled.MachineLearning.Svm.Data;
 using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Parameters
 {
     public class ParametersSelectionFactory
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         private readonly TaskFactory taskFactory;
 
-        private readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private readonly IProblemFactory problemFactory;
 
-        public ParametersSelectionFactory(TaskFactory taskFactory)
+        public ParametersSelectionFactory(TaskFactory taskFactory, IProblemFactory problemFactory)
         {
             Guard.NotNull(() => taskFactory, taskFactory);
+            Guard.NotNull(() => problemFactory, problemFactory);
             this.taskFactory = taskFactory;
+            this.problemFactory = problemFactory;
         }
 
         public IParameterSelection Create(TrainingHeader header, IArffDataSet dataset)
@@ -51,7 +55,7 @@ namespace Wikiled.MachineLearning.Svm.Parameters
                     logger.Warn("Investigate LibLinear");
                 }
 
-                var training = dataset.GetProblem();
+                var training = problemFactory.Construct(dataset).GetProblem();
                 defaultParameter.Weights = WeightCalculation.GetWeights(training.Y);
                 foreach (var classItem in defaultParameter.Weights)
                 {

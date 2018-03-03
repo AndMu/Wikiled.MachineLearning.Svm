@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Wikiled.Arff.Persistence;
+using Wikiled.Arff.Persistence.Headers;
 using Wikiled.Common.Arguments;
 using Wikiled.Common.Extensions;
 using Wikiled.Common.Serialization;
@@ -31,27 +32,9 @@ namespace Wikiled.MachineLearning.Svm.Extensions
             }
         }
 
-        public static Problem GetProblem(this IArffDataSet arff, Func<IArffDataRow, bool> filter = null)
+        public static IArffDataSet CreateTestDataset(this IArffDataSet baseDataSet)
         {
-            var lines = new List<DataLine>();
-            foreach (var review in arff.Documents)
-            {
-                if (filter != null &&
-                    !filter(review))
-                {
-                    continue;
-                }
-
-                int? classId = review.Class.Value == null ? (int?)null : arff.Header.Class.ReadClassIdValue(review.Class);
-                var dataLine = new DataLine(classId);
-                review.ProcessLine(dataLine);
-                if (dataLine.TotalValues > 0)
-                {
-                    lines.Add(dataLine);
-                }
-            }
-
-            return Problem.Read(lines.ToArray());
+            return ArffDataSet.CreateFixed((IHeadersWordsHandling)baseDataSet.Header.Clone(), "Test");
         }
 
         public static void FullSave(this IArffDataSet data, string path, TrainingHeader header = null)
