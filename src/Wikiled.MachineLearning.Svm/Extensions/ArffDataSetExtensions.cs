@@ -34,7 +34,9 @@ namespace Wikiled.MachineLearning.Svm.Extensions
 
         public static IArffDataSet CreateTestDataset(this IArffDataSet baseDataSet)
         {
-            return ArffDataSet.CreateFixed((IHeadersWordsHandling)baseDataSet.Header.Clone(), "Test");
+            var result = ArffDataSet.CreateFixed((IHeadersWordsHandling)baseDataSet.Header.Clone(), "Test");
+            result.Random = baseDataSet.Random;
+            return result;
         }
 
         public static void FullSave(this IArffDataSet data, string path, TrainingHeader header = null)
