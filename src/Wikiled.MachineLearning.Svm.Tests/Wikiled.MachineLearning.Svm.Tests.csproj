@@ -9,8 +9,8 @@
   <PackageReference Include="NLog" Version="4.5.0-rc05" />
     <PackageReference Include="NUnit" Version="3.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />    
-    <PackageReference Include="Wikiled.Arff" Version="2.0.12" />
-    <PackageReference Include="Wikiled.Common" Version="1.0.8" />
+    <PackageReference Include="Wikiled.Arff" Version="2.0.16" />
+    <PackageReference Include="Wikiled.Common" Version="1.0.9" />
   </ItemGroup>
 
 <ItemGroup>
