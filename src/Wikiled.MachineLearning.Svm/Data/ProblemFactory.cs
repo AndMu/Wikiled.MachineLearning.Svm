@@ -1,6 +1,6 @@
-﻿using Wikiled.Arff.Persistence;
+﻿using Wikiled.Arff.Extensions;
+using Wikiled.Arff.Persistence;
 using Wikiled.Common.Arguments;
-using Wikiled.MachineLearning.Svm.Extensions;
 using Wikiled.MachineLearning.Svm.Logic;
 
 namespace Wikiled.MachineLearning.Svm.Data
@@ -33,30 +33,7 @@ namespace Wikiled.MachineLearning.Svm.Data
         public IProblemSource Construct(IArffDataSet currentDataSet)
         {
             Guard.NotNull(() => currentDataSet, currentDataSet);
-            var dataSet = baseDataSet.CreateTestDataset();
-            dataSet.Random = currentDataSet.Random;
-            foreach (var review in currentDataSet.Documents)
-            {
-                if (review.Count == 0)
-                {
-                    continue;
-                }
-
-                var newReview = dataSet.AddDocument();
-                foreach (var word in review.GetRecords())
-                {
-                    var addedWord = newReview.AddRecord(word.Header);
-                    if (addedWord == null)
-                    {
-                        continue;
-                    }
-
-                    addedWord.Value = word.Value;
-                }
-
-                newReview.Class.Value = review.Class.Value;
-            }
-
+            var dataSet = currentDataSet.CopyDataSet(baseDataSet.Header, "Test");
             return new ProblemSource(dataSet) { Transform = transform };
         }
     }

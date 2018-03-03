@@ -24,6 +24,10 @@ namespace Wikiled.MachineLearning.Svm.Clients
             Guard.NotNull(() => dataSet, dataSet);
             this.problemFactory = problemFactory;
             this.dataSet = dataSet;
+            if (dataSet.RandomSeed == null)
+            {
+                dataSet.RandomSeed = Environment.TickCount;
+            }
         }
 
         public IParameterSelection SelectParameters(TrainingHeader header, CancellationToken token)

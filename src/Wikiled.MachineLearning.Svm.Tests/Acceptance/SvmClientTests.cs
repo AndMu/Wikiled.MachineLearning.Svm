@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using Wikiled.Arff.Extensions;
 using Wikiled.Arff.Persistence;
 using Wikiled.MachineLearning.Svm.Clients;
 using Wikiled.MachineLearning.Svm.Data;
@@ -26,7 +27,7 @@ namespace Wikiled.MachineLearning.Svm.Tests.Acceptance
             IProblemFactory factory = new ProblemFactory(dataSet);
             var client = new SvmTesting(model, factory);
 
-            var dataHolder = dataSet.CreateTestDataset();
+            var dataHolder = dataSet.CreateDataSet("Test");
             var review = dataHolder.AddDocument();
             review.AddRecord("Good").Value = 2;
             review.AddRecord("Bad").Value = 1;
